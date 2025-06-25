@@ -1,0 +1,42 @@
+name: Update draw.io submodule
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-submodule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Ensure vendor directory
+        run: |
+          mkdir -p vendor
+
+      - name: Add or update drawio submodule to latest tag
+        run: |
+          latest_tag=$(git -c versionsort.suffix=- ls-remote --tags --refs https://github.com/jgraph/drawio \
+            | cut -d/ -f3 | sort -V | tail -n1)
+          if [ ! -d vendor/drawio ]; then
+            git submodule add https://github.com/jgraph/drawio vendor/drawio
+          fi
+          cd vendor/drawio
+          git fetch --tags
+          git checkout "$latest_tag"
+          cd ../..
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .gitmodules vendor/drawio
+          git commit -m "Update draw.io submodule" || echo "No changes to commit"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
