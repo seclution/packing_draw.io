@@ -27,7 +27,9 @@
     <artifactId>draw.io-parent</artifactId>
     <version>24.5.5-4-SNAPSHOT</version>
   </parent>
-  <artifactId>draw.io</artifactId>
+  <groupId>de.seclution.xwiki</groupId>
+  <artifactId>drawio-webjar</artifactId>
+  <version>22.0.3</version>
   <packaging>webjar</packaging>
   <name>draw.io WebJar</name>
   <description>Provides WebJar packaging for the draw.io JavaScript diagramming library.</description>
